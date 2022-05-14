@@ -1,5 +1,5 @@
 import { createDriver } from 'use-neo4j';
-
+import NeoVis from 'neovis.js';
 export default function DisplayGraph() {
     const [data, setData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -16,7 +16,7 @@ export default function DisplayGraph() {
         setError(false);
         setErrorMessage("");
         const response = await fetch(
-            "http://localhost:5000/api/v1/graph/getGraphData"
+            "http://localhost:5000/api/v1/graph/getNodes"
         );
         const json = await response.json();
         setData(json);
@@ -37,16 +37,12 @@ export default function DisplayGraph() {
                 <div className="graphDisplayerLeft">
                     <h3 className="graphDisplayerLogo">Academian Graph</h3>
                 </div>
-                <div className="graphDisplayerRight">
-                    <div className="graphDisplayerBox">
-                        <div className="graphDisplayerTitle">{graphTitle}</div>
-                        <div className="graphDisplayerXAxis">{graphXAxis}</div>
-                        <div className="graphDisplayerYAxis">{graphYAxis}</div>
-                        <div className="graphDisplayerGraph">
-                            <Graph data={graphData} type={graphType} />
-                        </div>
-                    </div>
-                </div>
+                <NeoVis
+                    graph={graphData}
+                    
+                >
+
+                </NeoVis>
             </div>
         </div>
     );

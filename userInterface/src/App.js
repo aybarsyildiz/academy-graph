@@ -1,8 +1,7 @@
 import './App.css';
 import { useEffect, useState } from "react";
+import DisplayCarData from './components/carDataDisplay/carDataDisplayer';
 import Login from './components/login/Login';
-import EditGraph from './components/EditGraph/EditGraph';
-import DisplayGraph from './components/DisplayGraph/graphDisplayer';
 import {
   BrowserRouter as Router,
   Switch,
@@ -31,14 +30,14 @@ function App() {
     <>
     <Router>
       <Switch>
-        <Route exact path="/admin">
-          {user ? <EditGraph setErrorCount={setErrorCount} />: <Login/>}
+        <Route exact path="/">
+          {user ? <DisplayCarData setErrorCount={setErrorCount} />: <Login/>}
         </Route>
         <Route path="/login">
           {user ? <Redirect to="/"/>: <Login/>}
         </Route>
-        <Route path="/displayGraph">
-           <DisplayGraph />
+        <Route path="/carData1">
+           <DisplayCarData />
         </Route>
       </Switch>
     </Router>
