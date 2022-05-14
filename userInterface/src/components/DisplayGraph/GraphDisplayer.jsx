@@ -1,34 +1,67 @@
-import { createDriver } from 'use-neo4j';
 import NeoVis from 'neovis.js';
+//https://github.com/neo4j-contrib/neovis.js/
+import { useEffect, useState } from 'react';
+// function DrawViz(){
+//     var config={
+//         containerId: "viz",
+//         neo4j: {
+//             serverUrl: "neo4j+s://18f4b03e.databases.neo4j.io",
+//             serverUser: "neo4j",
+//             serverPassword: "u1_rMzco54I1jH-Eiz7bEhWV32fiJLhhnmkOzBnHgv4"
+//         },
+//         labels: {
+//             Person:{
+//                 label:"name"
+//             },
+//             Publish:{
+//                 label:"name"
+//             },
+//         },
+//         relationships:{
+//             INTERACTS:{
+//                 value: "Publish"
+//             }
+//         },
+//         initialCypher: `match (n) return n limit 25`,
+
+//     };
+//     //get configuration and use them on Neovis
+//     var viz = new Neovis(config);
+//     console.log(viz);
+
+//     //if there is context in viz render viz else render something else
+//     if(viz != null){
+//         return viz.render();
+//     }
+//     else{
+//         return(
+//             <div>
+//                 <h1>Veriler Getirilemedi</h1>
+//             </div>
+//         )
+//     }
+
+    
+
+
+// }
+
 export default function DisplayGraph() {
     const [data, setData] = useState([]);
-    const [isFetching, setIsFetching] = useState(false);
-    const [error, setError] = useState(false);
-    const [errorMessage, setErrorMessage] = useState("");
-    const [graphData, setGraphData] = useState([]);
-    const [graphType, setGraphType] = useState("");
-    const [graphTitle, setGraphTitle] = useState("");
-    const [graphXAxis, setGraphXAxis] = useState("");
-    const [graphYAxis, setGraphYAxis] = useState("");
 
     const fetchData = async () => {
-        setIsFetching(true);
-        setError(false);
-        setErrorMessage("");
+        
         const response = await fetch(
-            "http://localhost:5000/api/v1/graph/getNodes"
+            "http://localhost:5000/api/v1/getNodes"
         );
         const json = await response.json();
         setData(json);
-        setIsFetching(false);
-        setGraphData(json.graphData);
-        setGraphType(json.graphType);
-        setGraphTitle(json.graphTitle);
-        setGraphXAxis(json.graphXAxis);
-        setGraphYAxis(json.graphYAxis);
+        console.log(json);
+        
     }
     useEffect(() => {
         fetchData();
+        
     }
     , []);
     return (
@@ -37,12 +70,8 @@ export default function DisplayGraph() {
                 <div className="graphDisplayerLeft">
                     <h3 className="graphDisplayerLogo">Academian Graph</h3>
                 </div>
-                <NeoVis
-                    graph={graphData}
-                    
-                >
-
-                </NeoVis>
+                <div  className="graphDisplayerReal">
+                </div>
             </div>
         </div>
     );

@@ -22,22 +22,27 @@ export default function Login() {
         <div className="login">
             <div className="loginWrapper">
                 <div className="loginLeft">
-                    <h3 className="loginLogo">Taxi Location</h3>
+                    <h3 className="loginLogo">Akademisyen Makale Graph</h3>
                 </div>
                 <div className="loginRight">
                     <form className="loginBox" onSubmit={handleClick}>
                             {error === true ? (
                                 <div className="error-message">Login Failure</div>
                             ) : (
-                                "Log In"
+                                "Admin Girişi"
                             )}
-                        <input placeholder="Username" className="loginInput" type="Username" required ref={Username} />
-                        <input placeholder="Password" className="loginInput" type="Password" required ref={Password} />
+                        <input placeholder="Kullanıcı Adı" className="loginInput" type="Username" required ref={Username} />
+                        <input placeholder="Şifre" className="loginInput" type="Password" required ref={Password} />
                         <button className="loginButton" type="submit" >
-                            Login
+                            Giriş Yap
                         </button>
-                        <span className="loginForgot">Forgot Password?</span>
+                        
+                        <span className="loginForgot">Şifreni mi unuttun?</span>
                     </form>
+                    <button className="loginButton" >
+                            <a href="/displayGraph"></a>
+                            Graph Görüntüle
+                    </button>
                 </div>
             </div>
         </div>
