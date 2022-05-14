@@ -1,6 +1,6 @@
 import { createDriver } from 'use-neo4j';
 
-export default function GraphDisplayer() {
+export default function DisplayGraph() {
     const [data, setData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [error, setError] = useState(false);

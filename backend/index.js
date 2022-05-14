@@ -19,34 +19,34 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
-app.get('/api/v1/createNewNode', (req, res) => {
-    req.params.id = req.body.id;
+
+app.get('/api/v1/createNewAcademician', (req, res) => {
     req.params.name = req.body.name;
-    req.params.type = req.body.type;
-    req.params.parent = req.body.parent;
+    session.run(`CREATE (n:Person {name:'${req.params.name}'}) RETURN n`);
+    res.send('Academician created');
+});
 
-    session.run(`CREATE (n:${req.params.type} {id: '${req.params.id}', name: '${req.params.name}', parent: '${req.params.parent}'}) RETURN n`);
-    res.send('Node created');
-}
-);
-
-app.get('/api/v1/createNewRelation', (req, res) => {
-    req.params.id = req.body.id;
+app.get('api/v1/createPublish', (req, res) => {
     req.params.name = req.body.name;
-    req.params.type = req.body.type;
-    req.params.parent = req.body.parent;
-    req.params.child = req.body.child;
-
-    session.run(`CREATE (n:${req.params.type} {id: '${req.params.id}', name: '${req.params.name}', parent: '${req.params.parent}', child: '${req.params.child}'}) RETURN n`);
-    res.send('Relation created');
-}
-);
+    req.params.publish = req.body.publish;
+    session.run(`MATCH (n:Person {name:'${req.params.name}'}) RETURN n`).then(function(result) {
+    if(result.records.length > 0) {
+        session.run(`MATCH (n:Person {name:'${req.params.name}'}) CREATE (n)-[:PUBLISHED]->(m:Publish {publish:'${req.params.publish}'}) RETURN n`);
+        res.send('Publish created');
+    } else {
+        session.run(`CREATE (n:Person {name:'${req.params.name}'}) RETURN n`);
+        session.run(`CREATE (n:Publish {name:'${req.params.publish}'}) RETURN n`);
+        session.run(`MATCH (n:Person {name:'${req.params.name}'}), (m:Publish {name:'${req.params.publish}'}) CREATE (n)-[:PUBLISH]->(m)`);
+        res.send('Publish created');
+    }
+});
+});
 
 app.get('/api/v1/getNodes', (req, res) => {
     session.run(`MATCH (n) RETURN n`).then(function(result) {
         res.send(result.records);
     }
     );
-}
-);
+
+});
 
