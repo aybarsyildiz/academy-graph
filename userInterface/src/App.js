@@ -32,7 +32,7 @@ function App() {
     <Router>
       <Switch>
         <Route exact path="/">
-          {user ? <DisplayGraph setErrorCount={setErrorCount} />: <Login/>}
+          {user ? <EditGraph /> : <DisplayGraph />}
         </Route>
         <Route path="/login">
           {user ? <Redirect to="/"/>: <Login/>}

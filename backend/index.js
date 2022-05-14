@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 var cors = require('cors');
 const dotenv = require( 'dotenv');
 const neo4j = require('neo4j-driver');
+const sqlite3 = require('sqlite3').verbose();
     
 const uri = 'neo4j+s://18f4b03e.databases.neo4j.io';
 const user = dotenv.config().parsed.NEO4J_USERNAME;
@@ -12,6 +13,38 @@ const driver = neo4j.driver(uri, neo4j.auth.basic(user, password))
 const session = driver.session()
    
 const port = process.env.PORT || 5000;
+
+//sqlite connection
+const db = new sqlite3.Database('./datas/login.db', (err) => {
+    if (err) {
+      return console.error(err.message);
+    }
+    console.log('Connected to the in-memory SQlite database.');
+});
+
+// db.run('CREATE TABLE users(id,username,password)');
+
+// let sql = `INSERT INTO users(id,username,password) VALUES(?,?,?)`;
+
+// db.run(sql,[2,"admin","admin0"],
+//   (err) => {
+//     if (err) {
+//       return console.error(err.message);
+//     }
+//     console.log('A new row has been created');
+//   }
+// )
+let sql = `SELECT * from users`;
+
+db.all(sql, [], (err, rows) => {
+  if (err) {
+    throw err;
+  }
+  rows.forEach((row) => {
+    console.log(row);
+  });
+});
+
 const app = express();
 
 app.use(cors());
@@ -49,4 +82,28 @@ app.get('/api/v1/getNodes', (req, res) => {
     );
 
 });
+
+//login
+app.post('/login', function (req, res, next) {
+
+    let sql = `SELECT * FROM users WHERE username = ? and password = ?`;
+    let username = `${req.body.Username}`;
+    let password = `${req.body.Password}`;
+    let success;
+    
+    db.get(sql, [username, password], (err, row) => {
+      if (err) {
+        return console.error(err.message);
+      }
+      console.log(row);
+      if(row != undefined){
+        res.json(row);
+      }
+      else{
+          res.status(400);
+          res.send('Invalid username or password');
+          res.send();
+      }
+  });
+  });
 

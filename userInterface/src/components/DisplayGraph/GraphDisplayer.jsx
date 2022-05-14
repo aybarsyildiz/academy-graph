@@ -1,6 +1,8 @@
-import NeoVis from 'neovis.js';
+import NeoVis from "neovis.js";
 //https://github.com/neo4j-contrib/neovis.js/
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import { Link  } from "react-router-dom";
+
 // function DrawViz(){
 //     var config={
 //         containerId: "viz",
@@ -41,38 +43,44 @@ import { useEffect, useState } from 'react';
 //         )
 //     }
 
-    
-
-
 // }
 
 export default function DisplayGraph() {
-    const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
 
-    const fetchData = async () => {
-        
-        const response = await fetch(
-            "http://localhost:5000/api/v1/getNodes"
-        );
-        const json = await response.json();
-        setData(json);
-        console.log(json);
-        
-    }
-    useEffect(() => {
-        fetchData();
-        
-    }
-    , []);
-    return (
-        <div className="graphDisplayer">
-            <div className="graphDisplayerWrapper">
-                <div className="graphDisplayerLeft">
-                    <h3 className="graphDisplayerLogo">Academian Graph</h3>
-                </div>
-                <div  className="graphDisplayerReal">
-                </div>
-            </div>
+//   const history = useHistory ();
+//   const routeChange = () => {
+    
+//     history('/login');
+//   };
+
+  const fetchData = async () => {
+    const response = await fetch("http://localhost:5000/api/v1/getNodes");
+    const json = await response.json();
+    setData(json);
+    console.log(json);
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+  return (
+    <div className="graphDisplayer">
+      <div className="graphDisplayerWrapper">
+        <div
+          className="graphDisplayerLeft"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            padding: "10px",
+          }}
+        >
+          <h3 className="graphDisplayerLogo">Academian Graph</h3>
+          <Link to="/login" className="loginButton">
+            admin girişi
+          </Link>
         </div>
-    );
+        <div className="graphDisplayerReal"></div>
+      </div>
+    </div>
+  );
 }
