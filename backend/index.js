@@ -83,6 +83,21 @@ app.get('/api/v1/createPublish', (req, res) => {
       });
 });
 
+app.get('/api/v1/relationBetweenAcademician', (req, res) => {
+    var session = driver.session();
+    req.params.name = req.body.name;
+    req.params.name2 = req.body.name2;
+    session.run(`MATCH (n:Person),(m:Person) WHERE n.name = "${req.params.name}" AND m.name = "${req.params.name2}" CREATE (n)-[r:WORKED_WITH]->(m) RETURN n,m,r`).then(function(result) {
+        if(result.records.length == 0){
+            res.send("İlişki Oluşturuldu");
+        }else{
+            res.send(result.records[0]._fields[0].properties);
+            console.log("İlişki Zaten Var");
+        }
+      });
+});
+
+
 app.get('/api/v1/createRelation', (req, res) => {
     var session = driver.session();
     req.params.name = req.body.name;
