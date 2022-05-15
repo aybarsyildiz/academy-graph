@@ -10,7 +10,6 @@ const user = dotenv.config().parsed.NEO4J_USERNAME;
 const password = dotenv.config().parsed.NEO4J_PASSWORD;
     
 const driver = neo4j.driver(uri, neo4j.auth.basic(user, password))
-const session = driver.session()
    
 const port = process.env.PORT || 5000;
 
@@ -54,31 +53,63 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 
 app.get('/api/v1/createNewAcademician', (req, res) => {
+    var session = driver.session();
     req.params.name = req.body.name;
-    session.run(`CREATE (n:Person {name:'${req.params.name}'}) RETURN n`);
-    res.send('Academician created');
+    session.run(`MATCH (n:Person) WHERE n.name = "${req.params.name}" RETURN n`).then(function(result) {
+        if(result.records.length == 0){
+            session.run(`CREATE (n:Person {name: "${req.params.name}"}) RETURN n`);
+            res.send("Academisyen Oluşturuldu");
+
+        }else{
+            res.send(result.records[0]._fields[0].properties);
+            console.log("Academisyen zaten var");
+        }
+        
+      });
+    
 });
 
-app.get('api/v1/createPublish', (req, res) => {
+app.get('/api/v1/createPublish', (req, res) => {
+    var session = driver.session();
+    req.params.name = req.body.name;
+    session.run(`MATCH (n:Publish) WHERE n.name = "${req.params.name}" RETURN n`).then(function(result) {
+        if(result.records.length == 0){
+            session.run(`CREATE (n:Publish {name: "${req.params.name}"}) RETURN n`);
+            res.send("Makale Oluşturuldu");
+        }else{
+            res.send(result.records[0]._fields[0].properties);
+            console.log("Makale Zaten Var");
+        }
+      });
+});
+
+app.get('/api/v1/createRelation', (req, res) => {
+    var session = driver.session();
     req.params.name = req.body.name;
     req.params.publish = req.body.publish;
-    session.run(`MATCH (n:Person {name:'${req.params.name}'}) RETURN n`).then(function(result) {
+    session.run(`MATCH (n:Publish {name:'${req.params.name}'}) RETURN n`).then(function(result) {
+      console.log(result.records);
     if(result.records.length > 0) {
-        session.run(`MATCH (n:Person {name:'${req.params.name}'}) CREATE (n)-[:PUBLISHED]->(m:Publish {publish:'${req.params.publish}'}) RETURN n`);
-        res.send('Publish created');
+        session.run(`MATCH (n:Person),(m:Publish) WHERE n.name = '${req.params.name}' AND m.name = '${req.params.publish}' CREATE (n)-[r:PUBLISHED]->(m) RETURN type(r)`);
+        res.send('İlişki oluşturuldu');
     } else {
-        session.run(`CREATE (n:Person {name:'${req.params.name}'}) RETURN n`);
-        session.run(`CREATE (n:Publish {name:'${req.params.publish}'}) RETURN n`);
-        session.run(`MATCH (n:Person {name:'${req.params.name}'}), (m:Publish {name:'${req.params.publish}'}) CREATE (n)-[:PUBLISH]->(m)`);
-        res.send('Publish created');
+        res.send('Böyle bir makale yok');
     }
 });
+
+});
+
+app.get('/api/v1/test', (req, res) => {
+    console.log(req.body);
+    res.send('test');
 });
 
 app.get('/api/v1/getNodes', (req, res) => {
+    var session = driver.session();
     session.run(`MATCH (n) RETURN n`).then(function(result) {
         res.send(result.records);
-    }
+        session.close();
+      }
     );
 
 });
