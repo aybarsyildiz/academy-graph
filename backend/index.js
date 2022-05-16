@@ -52,7 +52,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.listen(port, () => console.log(`Listening on port ${port}`));
 
 
-app.get('/api/v1/createNewAcademician', (req, res) => {
+app.post('/api/v1/createNewAcademician', (req, res) => {
     var session = driver.session();
     req.params.name = req.body.name;
     session.run(`MATCH (n:Person) WHERE n.name = "${req.params.name}" RETURN n`).then(function(result) {
@@ -69,7 +69,7 @@ app.get('/api/v1/createNewAcademician', (req, res) => {
     
 });
 
-app.get('/api/v1/createPublish', (req, res) => {
+app.post('/api/v1/createPublish', (req, res) => {
     var session = driver.session();
     req.params.name = req.body.name;
     session.run(`MATCH (n:Publish) WHERE n.name = "${req.params.name}" RETURN n`).then(function(result) {
@@ -83,7 +83,7 @@ app.get('/api/v1/createPublish', (req, res) => {
       });
 });
 
-app.get('/api/v1/relationBetweenAcademician', (req, res) => {
+app.post('/api/v1/relationBetweenAcademician', (req, res) => {
     var session = driver.session();
     req.params.name = req.body.name;
     req.params.name2 = req.body.name2;
@@ -98,11 +98,11 @@ app.get('/api/v1/relationBetweenAcademician', (req, res) => {
 });
 
 
-app.get('/api/v1/createRelation', (req, res) => {
+app.post('/api/v1/createRelation', (req, res) => {
     var session = driver.session();
     req.params.name = req.body.name;
     req.params.publish = req.body.publish;
-    session.run(`MATCH (n:Publish {name:'${req.params.name}'}) RETURN n`).then(function(result) {
+    session.run(`MATCH (n:Publish {name:'${req.params.publish}'}) RETURN n`).then(function(result) {
       console.log(result.records);
     if(result.records.length > 0) {
         session.run(`MATCH (n:Person),(m:Publish) WHERE n.name = '${req.params.name}' AND m.name = '${req.params.publish}' CREATE (n)-[r:PUBLISHED]->(m) RETURN type(r)`);
